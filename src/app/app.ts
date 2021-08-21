@@ -34,7 +34,7 @@ export class App implements IApp {
 		);
 	}
 
-	private readonly expressInstance: express.Express;
+	public readonly expressInstance: express.Express;
 
 	private readonly router: express.Router;
 
