@@ -34,7 +34,7 @@ export class App implements IApp {
 		);
 	}
 
-	private readonly expressInstance: express.Express;
+	public readonly expressInstance: express.Express;
 
 	private readonly router: express.Router;
 
@@ -51,6 +51,12 @@ export class App implements IApp {
 		this.server = manifest.server.secure
 			? https.createServer(this.expressInstance)
 			: http.createServer(this.expressInstance);
+
+		if (manifest.server.corsEnabled) {
+			this.expressInstance.use(
+				cors()
+			);
+		}
 
 		this.addStaticLocations();
 		this.insertRequestHandlers();

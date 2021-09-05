@@ -11,6 +11,7 @@ export const getDefaultManifest: () => Manifest = () => {
 		server: {
 			port: 3000,
 			secure: false,
+			corsEnabled: false,
 			staticLocations: []
 		},
 		viewEngines: {
@@ -45,6 +46,12 @@ export const getDefaultManifest: () => Manifest = () => {
 					}
 				}
 			],
+		},
+		page: {
+			decorations: {
+				beforeHtml: "",
+				afterHtml: ""
+			}
 		}
 	};
 };

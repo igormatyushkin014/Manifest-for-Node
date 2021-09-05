@@ -12,6 +12,7 @@ export type Manifest = {
 	readonly server: {
 		readonly port: number,
 		readonly secure: boolean,
+		readonly corsEnabled: boolean,
 		readonly staticLocations: server.StaticLocation[]
 	},
 	readonly viewEngines: {
