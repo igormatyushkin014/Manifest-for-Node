@@ -3,10 +3,10 @@
 </p>
 
 <p align="center">
-    <a href="https://http://www.android.com">
+    <a href="#">
         <img src="https://img.shields.io/badge/Created for-Node.js-teal.svg?style=flat">
     </a>
-    <a href="https://http://www.android.com">
+    <a href="#">
         <img src="https://img.shields.io/badge/Written in-TypeScript-purple.svg?style=flat">
     </a>
     <a href="https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)">
@@ -23,14 +23,14 @@
 Type in Terminal:
 
 ```
-npm install --save @imatyushkin/manifest express express-hbs hbs socket.io
+npm install --save @russo-programmisto/manifest express express-hbs hbs socket.io
 npm install --save-dev @types/express @types/hbs @types/socket.io
 ```
 
 or, if you prefer `yarn` over `npm`, type:
 
 ```
-yarn add @imatyushkin/manifest express express-hbs hbs socket.io
+yarn add @russo-programmisto/manifest express express-hbs hbs socket.io
 yarn add @types/express @types/hbs @types/socket.io --dev
 ```
 
@@ -48,7 +48,7 @@ yarn add @types/express @types/hbs @types/socket.io --dev
 The simplest way to start Express server:
 
 ```typescript
-import * as mfst from "@imatyushkin/manifest";
+import * as mfst from "@russo-programmisto/manifest";
 
 mfst.App.create().start();
 ```
@@ -70,7 +70,7 @@ Quite simple, right? 😉
 Now let's learn how to configure our server:
 
 ```typescript
-import * as mfst from "@imatyushkin/manifest";
+import * as mfst from "@russo-programmisto/manifest";
 
 let app = mfst.App.create({
 	server: {
@@ -121,6 +121,10 @@ Port number that server will be listen to.
 #### `server.secure`
 
 If `true`, HTTPS will be used under the hood. Otherwise, we'll use unsecure HTTP.
+
+#### `server.corsEnabled`
+
+If `true`, CORS will be enabled for all endpoints.
 
 #### `server.staticLocations`
 
