@@ -28,7 +28,7 @@ export type Manifest = {
 	readonly blacklist?: {
 		ip: string[]
 	},
-	readonly page: {
+	readonly page?: {
 		readonly decorations?: {
 			readonly beforeHtml: string,
 			readonly afterHtml: string,
