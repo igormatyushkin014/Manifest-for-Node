@@ -1,6 +1,6 @@
 {
   "name": "@russo-programmisto/manifest",
-  "version": "3.6.1",
+  "version": "3.7.1",
   "description": "Easy configuration for Node.js app",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
