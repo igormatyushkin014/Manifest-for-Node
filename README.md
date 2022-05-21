@@ -23,23 +23,22 @@
 Type in Terminal:
 
 ```
-npm install --save @russo-programmisto/manifest express express-hbs hbs socket.io
-npm install --save-dev @types/express @types/hbs @types/socket.io
+npm install --save @russo-programmisto/manifest express hbs express-hbs
+npm install --save-dev @types/express @types/hbs
 ```
 
 or, if you prefer `yarn` over `npm`, type:
 
 ```
-yarn add @russo-programmisto/manifest express express-hbs hbs socket.io
-yarn add @types/express @types/hbs @types/socket.io --dev
+yarn add @russo-programmisto/manifest express hbs express-hbs
+yarn add @types/express @types/hbs --dev
 ```
 
 ## Requirements
 
 - [express](https://expressjs.com)
-- [express-hbs](https://www.npmjs.com/package/express-hbs)
 - [hbs](https://www.npmjs.com/package/hbs)
-- [socket.io](https://socket.io)
+- [express-hbs](https://www.npmjs.com/package/express-hbs)
 
 ## Usage
 

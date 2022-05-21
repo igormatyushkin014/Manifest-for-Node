@@ -1,31 +1,34 @@
 {
-    "name": "@russo-programmisto/manifest",
-    "version": "4.0.0",
-    "description": "Easy configuration for Node.js app",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
-    "scripts": {
-        "build": "rm -rf dist && tsc",
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/russo-programmisto/Manifest-for-Node.git"
-    },
-    "author": "Igor Matyushkin",
-    "license": "Apache-2.0",
-    "bugs": {
-        "url": "https://github.com/russo-programmisto/Manifest-for-Node/issues"
-    },
-    "homepage": "https://github.com/russo-programmisto/Manifest-for-Node#readme",
-    "dependencies": {
-        "cors": "2.8.5",
-        "express": "4.17.2"
-    },
-    "devDependencies": {
-        "@types/cors": "2.8.12",
-        "@types/express": "4.17.13",
-        "@types/node": "16.7.10",
-        "typescript": "4.5.4"
-    }
+  "name": "@russo-programmisto/manifest",
+  "version": "4.0.0",
+  "description": "Easy configuration for Node.js app",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/russo-programmisto/Manifest-for-Node.git"
+  },
+  "author": "Igor Matyushkin",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/russo-programmisto/Manifest-for-Node/issues"
+  },
+  "homepage": "https://github.com/russo-programmisto/Manifest-for-Node#readme",
+  "dependencies": {
+    "cors": "2.8.5",
+    "express": "4.17.2",
+    "express-hbs": "2.4.0",
+    "hbs": "4.2.0"
+  },
+  "devDependencies": {
+    "@types/cors": "2.8.12",
+    "@types/express": "4.17.13",
+    "@types/hbs": "4.0.1",
+    "@types/node": "16.7.10",
+    "typescript": "4.5.4"
+  }
 }
