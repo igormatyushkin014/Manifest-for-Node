@@ -1,15 +1,14 @@
 export {
-	IApp,
 	App
-} from "./app/index";
+} from "./app";
 
 export {
 	Manifest
-} from "./configuration/index";
+} from "./manifest";
 
 export {
 	RequestHandler
-} from "./io/request";
+} from "./io/request/request-handler";
 
 export {
 	CustomResponse,
@@ -22,16 +21,4 @@ export {
 
 export {
 	Route
-} from "./routes";
-
-export {
-	StaticLocation
-} from "./server";
-
-export {
-	ViewEngine
-} from "./view-engines";
-
-export {
-	ViewData
-} from "./views";
+} from "./route";

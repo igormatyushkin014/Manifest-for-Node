@@ -73,38 +73,75 @@ Now let's learn how to configure our server:
 import * as mfst from "@russo-programmisto/manifest";
 
 let app = mfst.App.create({
-	server: {
-		port: 3000,
-		secure: false,
-		corsEnabled: true,
-		staticLocations: []
-	},
-	viewEngines: {
-		current: ViewEngine.handlebars
-	},
-	io: {
-		handlers: [],
-		routes: [
-			{
-				url: `/`,
-				methods: {
-					get: {
-						text: `<h1>This page is under construction</h1>`,
-					}
-				}
-			},
-			{
-				url: `*`,
-				methods: {
-					get: {
-						text: `<h1>Page not found</h1>`,
-						status: 404,
-						timeout: 20000
-					}
-				}
-			}
-		],
-	}
+    server: {
+        port: 3000,          // Use any port, usually it's 3000
+        secure: false,       // HTTP or HTTPS
+        corsEnabled: true    // Set to `true` if you're building API
+    },
+    api: {
+        routes: [
+            {
+                url: `/`,
+                methods: {
+                    get: {
+                        text: `<h1>This page is under construction</h1>`,
+                    }
+                }
+            },
+            {
+                url: "/users",
+                    methods: {
+                        get: {
+                            json: {
+                                count: 200,
+                                users: [
+                                    {
+                                        id: 1,
+                                        first_name: "John",
+                                        last_name: "Appleseed"
+                                    },
+                                    // etc...
+                                ]
+                            }
+                        },
+                        post: {
+                            handler: (req, res) => {
+                                const { first_name, last_name } = req.body;
+                                
+                                if (first_name && last_name) {
+                                    // Create user in database...
+                                    return {
+                                        json: {
+                                            id: 123,
+                                            first_name,
+                                            last_name
+                                        },
+                                        status: 200
+                                    };
+                                } else {
+                                    return {
+                                        json: {
+                                            message: "Please make sure that you send first_name and last_name parameters."
+                                        },
+                                        status: 400
+                                    };
+                                }
+                            }
+                        }
+                    }
+                },
+            {
+                url: `*`,
+                methods: {
+                    get: {
+                        text: `<h1>Page not found</h1>`,
+                        status: 404,
+                        timeout: 2000
+                    }
+                }
+            }
+        ],
+    }
 });
 
 app.start();
@@ -126,60 +163,43 @@ If `true`, HTTPS will be used under the hood. Otherwise, we'll use unsecure HTTP
 
 If `true`, CORS will be enabled for all endpoints.
 
-#### `server.staticLocations`
+#### `api.requestHandlers`
 
-Array of objects. Each object describes an Express static location.
-
-Example:
-
-```typescript
-{
-	staticLocations: [
-		{
-			alias: `/views`,
-			realPath: `${__dirname}/frontend`
-		}
-	]
-}
-```
-
-#### `io.handlers`
-
-Array of lambda functions. Each function has `request` parameter and handles request before it's processed by `Manifest` framework. You can use handlers for any purpose. For example, sending request information to the console output:
+Array of functions. Each function has `request` parameter and handles request before it's processed by `Manifest` framework. You can use handlers for any purpose. For example, sending request information to the console output:
 
 ```typescript
 requestHandlers: [
-	(request) => {
-		console.log("Request:", `"${request.url}"`);
-	}
+    (request) => {
+        console.log(`Request to ${request.url}`);
+    }
 ]
 ```
 
-#### `io.routes`
+#### `api.routes`
 
 Array of objects. Each object represents a different route. Example:
 
 ```typescript
 {
-	routes: [
-		{
-			url: `/`,
-			methods: {
-				get: {
-					text: "Hello!"
-				},
-				post: {
-					text: "Post response."
-				},
-				put: {
-					text: "Put response."
-				},
-				delete: {
-					text: "Delete response."
-				}
-			}
-		}
-	]
+    routes: [
+        {
+            url: "/",
+            methods: {
+                get: {
+                    text: "Hello!"
+                },
+                post: {
+                    text: "Post response."
+                },
+                put: {
+                    text: "Put response."
+                },
+                delete: {
+                    text: "Delete response."
+                }
+            }
+        }
+    ]
 }
 ```
 
@@ -203,16 +223,16 @@ Example of text response:
 
 ```typescript
 {
-	routes: [
-		{
-			url: `/profile`,
-			methods: {
-				get: {
-					text: "<h1>John Green</h1>"
-				}
-			}
-		}
-	]
+    routes: [
+        {
+            url: `/profile`,
+            methods: {
+                get: {
+                    text: "<h1>John Green</h1>"
+                }
+            }
+        }
+    ]
 }
 ```
 
@@ -220,19 +240,19 @@ JSON response:
 
 ```typescript
 {
-	routes: [
-		{
-			url: `/profile`,
-			methods: {
-				get: {
-					json: {
-						first_name: "John",
-						last_name: "Green"
-					}
-				}
-			}
-		}
-	]
+    routes: [
+        {
+            url: `/profile`,
+            methods: {
+                get: {
+                    json: {
+                        first_name: "John",
+                        last_name: "Green"
+                    }
+                }
+            }
+        }
+    ]
 }
 ```
 
@@ -240,21 +260,21 @@ Page response:
 
 ```typescript
 {
-	routes: [
-		{
-			url: `/profile`,
-			methods: {
-				get: {
-					path: `${__dirname}/views/profile.hbs`,
-					data: {
-						// Optional data that will be used by Handlebars engine.
-						firstName: "John",
-						lastName: "Green"
-					}
-				}
-			}
-		}
-	]
+    routes: [
+        {
+            url: `/profile`,
+            methods: {
+                get: {
+                    path: `${__dirname}/views/profile.hbs`,
+                    data: {
+                        // Optional data that will be used by Handlebars engine.
+                        firstName: "John",
+                        lastName: "Green"
+                    }
+                }
+            }
+        }
+    ]
 }
 ```
 
@@ -262,16 +282,16 @@ Redirect response:
 
 ```typescript
 {
-	routes: [
-		{
-			url: `/profile`,
-			methods: {
-				get: {
-					redirectTo: "/not_found"
-				}
-			}
-		}
-	]
+    routes: [
+        {
+            url: `/profile`,
+            methods: {
+                get: {
+                    redirectTo: "/not_found"
+                }
+            }
+        }
+    ]
 }
 ```
 
@@ -279,27 +299,27 @@ Custom response:
 
 ```typescript
 {
-	routes: [
-		{
-			url: `/profile`,
-			methods: {
-				get: {
-					handler: (request, response) => {
-						let firstName = "John";
-						let lastName = "Green";
+    routes: [
+        {
+            url: `/profile`,
+            methods: {
+                get: {
+                    handler: (request, response) => {
+                        let firstName = "John";
+                        let lastName = "Green";
 
-						// We have to return text or JSON or page response here.
-						return {
-							json: {
-								first_name: firstName,
-								last_name: lastName
-							}
-						};
-					}
-				}
-			}
-		}
-	]
+                        // We have to return text or JSON or page response here.
+                        return {
+                            json: {
+                                first_name: firstName,
+                                last_name: lastName
+                            }
+                        };
+                    }
+                }
+            }
+        }
+    ]
 }
 ```
 
@@ -307,27 +327,27 @@ Custom asynchronous response:
 
 ```typescript
 {
-	routes: [
-		{
-			url: `/profile`,
-			methods: {
-				get: {
-					asyncHandler: (request, response, callback) => {
-						let firstName = "John";
-						let lastName = "Green";
-						
-						// Return response using callback.
-						callback({
-							json: {
-								first_name: firstName,
-								last_name: lastName
-							}
-						});
-					}
-				}
-			}
-		}
-	]
+    routes: [
+        {
+            url: `/profile`,
+            methods: {
+                get: {
+                    asyncHandler: (request, response, callback) => {
+                        let firstName = "John";
+                        let lastName = "Green";
+                        
+                        // Return response using callback.
+                        callback({
+                            json: {
+                                first_name: firstName,
+                                last_name: lastName
+                            }
+                        });
+                    }
+                }
+            }
+        }
+    ]
 }
 ```
 
@@ -340,17 +360,17 @@ Example of using custom HTTP status:
 
 ```typescript
 {
-	routes: [
-		{
-			url: `/profile`,
-			methods: {
-				get: {
-					text: "<h1>Not found</h1>",
-					status: 404
-				}
-			}
-		}
-	]
+    routes: [
+        {
+            url: `/profile`,
+            methods: {
+                get: {
+                    text: "<h1>Not found</h1>",
+                    status: 404
+                }
+            }
+        }
+    ]
 }
 ```
 
@@ -358,32 +378,33 @@ Sometimes you might want to simulate slow server. Use `delay` for this purpose:
 
 ```typescript
 {
-	routes: [
-		{
-			url: `/profile`,
-			methods: {
-				get: {
-					json: {
-						first_name: "John",
-						last_name: "Green"
-					},
-					delay: 4000
-				}
-			}
-		}
-	]
+    routes: [
+        {
+            url: `/profile`,
+            methods: {
+                get: {
+                    json: {
+                        first_name: "John",
+                        last_name: "Green"
+                    },
+                    delay: 4000
+                }
+            }
+        }
+    ]
 }
 ```
 
 #### `server.viewEngines.current`
 
-The current view engine. Currently supports `ViewEngine.handlebars` only.
+The current view engine. Currently supports `handlebars` only. Possible values:
 
-#### `server.viewEngines.settings.handlebars`
+* `handlebars`
+* `none`
 
-Configuration for Handlebars view engine. Includes parameters:
+#### `server.viewEngines.partialsDirectory`
 
-- `partialsDir`: Path to partials directory.
+Path to partials directory for the view engine.
 
 ## License
 

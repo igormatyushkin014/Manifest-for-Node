@@ -1,3 +1,0 @@
-export {
-	Manifest
-} from "./manifest";

@@ -1,3 +1,0 @@
-export {
-	Configuration
-} from "./configuration";

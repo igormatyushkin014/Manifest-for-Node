@@ -1,6 +1,4 @@
-import {
-	AnyResponse
-} from "../io/response";
+import { AnyResponse } from "./io/response/any-response";
 
 export type Route = {
 	url: string,

@@ -1,8 +1,5 @@
 import express from "express";
-
-import {
-	AnyResponse
-} from "./any-response";
+import { AnyResponse } from "./any-response";
 
 export class AsyncCustomResponse {
 

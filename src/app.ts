@@ -1,36 +1,25 @@
 import express from "express";
-
 import http from "http";
-
 import https from "https";
-
-import {
-	IApp
-} from "./app.interface";
-
-import {
-	Manifest
-} from "../configuration";
-
-import * as io_request from "../io/request";
-
-import * as io_response from "../io/response";
-
-import * as viewEngines from "../view-engines";
-
-import * as expressVendor from "../vendors/express";
-
-import * as store from "../store";
-
 import cors from "cors";
+import { RequestHandler } from "./io/request/request-handler";
+import { getDefaultManifest, Manifest } from "./manifest";
+import { InputOutput } from "./integration/express/input-output";
+import { AnyResponse } from "./io/response/any-response";
+import { isCustomResponse } from "./io/response/custom-response";
+import { isAsyncCustomResponse } from "./io/response/async-custom-response";
+import { isTextResponse } from "./io/response/text-response";
+import { isJsonResponse } from "./io/response/json-response";
+import { isPageResponse } from "./io/response/page-response";
+import { isRedirectResponse } from "./io/response/redirect-response";
 
-export class App implements IApp {
+export class App {
 
 	public static create(
 		manifest: Manifest | null = null
 	): App {
 		return new App(
-			manifest ? manifest : store.getDefaultManifest()
+			manifest ? manifest : getDefaultManifest()
 		);
 	}
 
@@ -38,7 +27,7 @@ export class App implements IApp {
 
 	private readonly router: express.Router;
 
-	private readonly requestHandlers: io_request.RequestHandler[];
+	private readonly requestHandlers: RequestHandler[];
 
 	private server: http.Server | https.Server;
 
@@ -51,6 +40,8 @@ export class App implements IApp {
 		this.server = manifest.server.secure
 			? https.createServer(this.expressInstance)
 			: http.createServer(this.expressInstance);
+
+		this.preSetup();
 
 		if (manifest.server.corsEnabled) {
 			this.expressInstance.use(
@@ -65,7 +56,7 @@ export class App implements IApp {
 	}
 
 	private addStaticLocations() {
-		this.manifest.server.staticLocations.forEach((location) => {
+		this.manifest.server.staticLocations?.forEach((location) => {
 			this.expressInstance.use(
 				location.alias,
 				express.static(
@@ -77,18 +68,29 @@ export class App implements IApp {
 
 	private insertRequestHandlers() {
 		this.expressInstance.use((request, response, next) => {
-			for (let handler of this.manifest.io.handlers) {
-				handler(request);
+			if (this.manifest.api.requestHandlers) {
+				for (let handler of this.manifest.api.requestHandlers) {
+					handler(request);
+				}
 			}
 
 			next();
 		});
 	}
 
+	private preSetup = () => {
+		if (this.manifest.server.preSetup) {
+			this.manifest.server.preSetup(
+				this.expressInstance,
+				this.server
+			);
+		}
+	}
+
 	private mountRoutes() {
 		let applyResponse = (
-			response: io_response.AnyResponse,
-			expressIO: expressVendor.InputOutput,
+			response: AnyResponse,
+			expressIO: InputOutput,
 			ignoreDelay: boolean
 		) => {
 			// Wait for delay if needed
@@ -113,7 +115,7 @@ export class App implements IApp {
 
 			// Check response type and handle it appropriately
 
-			if (io_response.isCustomResponse(response)) {
+			if (isCustomResponse(response)) {
 				let result = response.handler(
 					expressIO.request,
 					expressIO.response
@@ -126,7 +128,7 @@ export class App implements IApp {
 						true
 					);
 				}
-			} else if (io_response.isAsyncCustomResponse(response)) {
+			} else if (isAsyncCustomResponse(response)) {
 				response.asyncHandler(
 					expressIO.request,
 					expressIO.response,
@@ -140,7 +142,7 @@ export class App implements IApp {
 						}
 					}
 				);
-			} else if (io_response.isTextResponse(response)) {
+			} else if (isTextResponse(response)) {
 				if (response.status) {
 					expressIO.response.status(
 						response.status
@@ -150,7 +152,7 @@ export class App implements IApp {
 				expressIO.response.send(
 					response.text
 				);
-			} else if (io_response.isJsonResponse(response)) {
+			} else if (isJsonResponse(response)) {
 				if (response.status) {
 					expressIO.response.status(
 						response.status
@@ -160,7 +162,7 @@ export class App implements IApp {
 				expressIO.response.json(
 					response.json
 				);
-			} else if (io_response.isPageResponse(response)) {
+			} else if (isPageResponse(response)) {
 				if (response.status) {
 					expressIO.response.status(
 						response.status
@@ -171,7 +173,7 @@ export class App implements IApp {
 					response.path,
 					response.data
 				);
-			} else if (io_response.isRedirectResponse(response)) {
+			} else if (isRedirectResponse(response)) {
 				expressIO.response.redirect(
 					response.redirectTo
 				);
@@ -182,16 +184,16 @@ export class App implements IApp {
 			next();
 		};
 
-		this.manifest.io.routes.forEach((route) => {
+		this.manifest.api.routes.forEach((route) => {
 			if (route.methods.get) {
+				let methodHandler = route.methods.get;
 				this.router.get(
 					route.url,
 					route.corsEnabled ? cors() : emptyHandler,
 					(request, response) => {
-						let methodHandler = route.methods.get!;
 						applyResponse(
 							route.methods.get!,
-							new expressVendor.InputOutput(
+							new InputOutput(
 								request,
 								response
 							),
@@ -202,14 +204,14 @@ export class App implements IApp {
 			}
 
 			if (route.methods.post) {
+				let methodHandler = route.methods.post;
 				this.router.post(
 					route.url,
 					route.corsEnabled ? cors() : emptyHandler,
 					(request, response) => {
-						let methodHandler = route.methods.post!;
 						applyResponse(
 							methodHandler,
-							new expressVendor.InputOutput(
+							new InputOutput(
 								request,
 								response
 							),
@@ -220,14 +222,14 @@ export class App implements IApp {
 			}
 
 			if (route.methods.put) {
+				let methodHandler = route.methods.put;
 				this.router.put(
 					route.url,
 					route.corsEnabled ? cors() : emptyHandler,
 					(request, response) => {
-						let methodHandler = route.methods.put!;
 						applyResponse(
 							methodHandler,
-							new expressVendor.InputOutput(
+							new InputOutput(
 								request,
 								response
 							),
@@ -238,14 +240,14 @@ export class App implements IApp {
 			}
 
 			if (route.methods.delete) {
+				let methodHandler = route.methods.delete;
 				this.router.delete(
 					route.url,
 					route.corsEnabled ? cors() : emptyHandler,
 					(request, response) => {
-						let methodHandler = route.methods.delete!;
 						applyResponse(
 							methodHandler,
-							new expressVendor.InputOutput(
+							new InputOutput(
 								request,
 								response
 							),
@@ -270,30 +272,27 @@ export class App implements IApp {
 		);
 	}
 
-	private setupViewEngine() {
-		switch (this.manifest.viewEngines.current) {
-			case viewEngines.ViewEngine.handlebars: {
-				let configuration = this.manifest.viewEngines.settings
-					&& this.manifest.viewEngines.settings.handlebars;
-
-				if (configuration) {
+	private setupViewEngine = () => {
+		if (this.manifest.viewEngines) {
+			switch (this.manifest.viewEngines.current) {
+				case "handlebars": {
 					var expressHbs = require("express-hbs");
 					this.expressInstance.engine(
 						"hbs",
 						expressHbs.express4({
-							partialsDir: configuration.partialsDir
+							partialsDir: this.manifest.viewEngines.partialsDirectory
 						})
 					);
-				}
 
-				this.expressInstance.set(
-					"view engine",
-					"hbs"
-				);
-				break;
-			}
-			case viewEngines.ViewEngine.none: {
-				break;
+					this.expressInstance.set(
+						"view engine",
+						"hbs"
+					);
+					break;
+				}
+				case "none": {
+					break;
+				}
 			}
 		}
 	}

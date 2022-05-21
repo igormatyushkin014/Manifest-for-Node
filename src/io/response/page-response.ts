@@ -1,12 +1,8 @@
-import {
-	ViewData
-} from "../../views";
-
 export class PageResponse {
 
 	constructor(
 		public readonly path: string,
-		public readonly data?: ViewData,
+		public readonly data?: any,
 		public readonly status?: number,
 		public readonly delay?: number | (() => number)
 	) {
