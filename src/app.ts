@@ -43,7 +43,7 @@ export class App {
 
 		this.preSetup();
 
-		if (manifest.server.corsEnabled) {
+		if (!manifest.server.corsBlocked) {
 			this.expressInstance.use(
 				cors()
 			);
@@ -189,7 +189,7 @@ export class App {
 				let methodHandler = route.methods.get;
 				this.router.get(
 					route.url,
-					route.corsEnabled ? cors() : emptyHandler,
+					route.corsBlocked ? emptyHandler : cors(),
 					(request, response) => {
 						applyResponse(
 							route.methods.get!,
@@ -207,7 +207,7 @@ export class App {
 				let methodHandler = route.methods.post;
 				this.router.post(
 					route.url,
-					route.corsEnabled ? cors() : emptyHandler,
+					route.corsBlocked ? emptyHandler : cors(),
 					(request, response) => {
 						applyResponse(
 							methodHandler,
@@ -225,7 +225,7 @@ export class App {
 				let methodHandler = route.methods.put;
 				this.router.put(
 					route.url,
-					route.corsEnabled ? cors() : emptyHandler,
+					route.corsBlocked ? emptyHandler : cors(),
 					(request, response) => {
 						applyResponse(
 							methodHandler,
@@ -243,7 +243,7 @@ export class App {
 				let methodHandler = route.methods.delete;
 				this.router.delete(
 					route.url,
-					route.corsEnabled ? cors() : emptyHandler,
+					route.corsBlocked ? emptyHandler : cors(),
 					(request, response) => {
 						applyResponse(
 							methodHandler,
@@ -263,7 +263,7 @@ export class App {
 		);
 		this.expressInstance.use(
 			express.urlencoded({
-				extended: false
+				extended: true
 			})
 		);
 		this.expressInstance.use(

@@ -2,7 +2,7 @@ import { AnyResponse } from "./io/response/any-response";
 
 export type Route = {
 	url: string,
-	corsEnabled?: boolean,
+	corsBlocked?: boolean,
 	methods: {
 		get?: AnyResponse,
 		post?: AnyResponse,

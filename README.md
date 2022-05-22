@@ -74,8 +74,7 @@ import * as mfst from "@russo-programmisto/manifest";
 let app = mfst.App.create({
     server: {
         port: 3000,          // Use any port, usually it's 3000
-        secure: false,       // HTTP or HTTPS
-        corsEnabled: true    // Set to `true` if you're building API
+        secure: false       // HTTP or HTTPS
     },
     api: {
         routes: [
@@ -158,7 +157,7 @@ Port number that server will be listen to.
 
 If `true`, HTTPS will be used under the hood. Otherwise, we'll use unsecure HTTP.
 
-#### `server.corsEnabled`
+#### `server.corsBlocked`
 
 If `true`, CORS will be enabled for all endpoints.
 
