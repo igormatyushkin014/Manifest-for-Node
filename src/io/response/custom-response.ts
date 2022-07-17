@@ -1,18 +1,21 @@
 import express from "express";
 import { AnyResponse } from "./any-response";
+import { BaseResponse, isBaseResponse } from "./base-response";
 
-export class CustomResponse {
-
-	constructor(
-		public readonly handler: (
-			request: express.Request,
-			response: express.Response
-		) => AnyResponse | undefined,
-		public readonly delay?: number | (() => number)
-	) {
-	}
+export interface CustomResponse extends BaseResponse {
+	handler: (
+		request: express.Request,
+		response: express.Response
+	) => AnyResponse | undefined
 }
 
-export const isCustomResponse = (object: any): object is CustomResponse => {
-	return "handler" in object;
-};
+export const isCustomResponse = (obj: any): obj is CustomResponse => {
+	if (isBaseResponse(obj)) {
+		const requirements = [
+			"handler" in obj && typeof obj["handler"] === "function"
+		];
+		return !requirements.includes(false);
+	} else {
+		return false;
+	}
+}

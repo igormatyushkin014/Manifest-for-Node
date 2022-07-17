@@ -1,13 +1,16 @@
-export class JsonResponse {
+import { BaseResponse, isBaseResponse } from "./base-response";
 
-	constructor(
-		public json: object,
-		public status?: number,
-		public readonly delay?: number | (() => number)
-	) {
-	}
+export interface JsonResponse extends BaseResponse {
+	json?: {[id: string]: any} | []
 }
 
-export const isJsonResponse = (object: any): object is JsonResponse => {
-	return "json" in object;
-};
+export const isJsonResponse = (obj: any): obj is JsonResponse => {
+	if (isBaseResponse(obj)) {
+		const requirements = [
+			"json" in obj && typeof obj["json"] === "object"
+		];
+		return !requirements.includes(false);
+	} else {
+		return false;
+	}
+}

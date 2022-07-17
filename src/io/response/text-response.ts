@@ -1,13 +1,16 @@
-export class TextResponse {
+import { BaseResponse, isBaseResponse } from "./base-response";
 
-	constructor(
-		public readonly text: string,
-		public readonly status?: number,
-		public readonly delay?: number | (() => number)
-	) {
-	}
+export interface TextResponse extends BaseResponse {
+	text: string
 }
 
-export const isTextResponse = (object: any): object is TextResponse => {
-	return "text" in object;
-};
+export const isTextResponse = (obj: any): obj is TextResponse => {
+	if (isBaseResponse(obj)) {
+		const requirements = [
+			"text" in obj && typeof obj["text"] === "string"
+		];
+		return !requirements.includes(false);
+	} else {
+		return false;
+	}
+}
