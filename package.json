@@ -20,7 +20,7 @@
     "homepage": "https://github.com/russo-programmisto/Manifest-for-Node#readme",
     "dependencies": {
         "cors": "2.8.5",
-        "express": "4.17.2",
+        "express": "4.17.3",
         "express-hbs": "2.4.0",
         "hbs": "4.2.0"
     },
