@@ -23,14 +23,14 @@
 Type in Terminal:
 
 ```
-npm install --save @russo-programmisto/manifest express hbs express-hbs
+npm install --save @simplisticated/manifest express hbs express-hbs
 npm install --save-dev @types/express @types/hbs
 ```
 
 or, if you prefer `yarn` over `npm`, type:
 
 ```
-yarn add @russo-programmisto/manifest express hbs express-hbs
+yarn add @simplisticated/manifest express hbs express-hbs
 yarn add @types/express @types/hbs --dev
 ```
 
@@ -47,7 +47,7 @@ yarn add @types/express @types/hbs --dev
 The simplest way to start Express server:
 
 ```typescript
-import * as mfst from "@russo-programmisto/manifest";
+import * as mfst from "@simplisticated/manifest";
 
 mfst.App.create().start();
 ```
@@ -69,7 +69,7 @@ Quite simple, right? 😉
 Now let's learn how to configure our server:
 
 ```typescript
-import * as mfst from "@russo-programmisto/manifest";
+import * as mfst from "@simplisticated/manifest";
 
 let app = mfst.App.create({
     server: {

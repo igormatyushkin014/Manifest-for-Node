@@ -87,111 +87,112 @@ export class App {
 		}
 	}
 
-	private mountRoutes() {
-		let applyResponse = (
-			response: AnyResponse,
-			expressIO: InputOutput,
-			ignoreDelay: boolean
-		) => {
-			// Wait for delay if needed
+	private sendResponse = (
+		response: AnyResponse,
+		inputOutput: InputOutput,
+		ignoreDelay: boolean
+	) => {
+		// Wait for delay if needed
 
-			if (!ignoreDelay && response.delay) {
-				let delay = response.delay instanceof Function
-					? response.delay() as number
-					: response.delay;
+		if (!ignoreDelay && response.delay) {
+			let delay = response.delay instanceof Function
+				? response.delay() as number
+				: response.delay;
 
-				setTimeout(
-					function () {
-						applyResponse(
-							response,
-							expressIO,
-							true
-						);
-					},
-					delay
-				);
-				return;
-			}
-
-			// Check response type and handle it appropriately
-
-			if (isCustomResponse(response)) {
-				let result = response.handler(
-					expressIO.request,
-					expressIO.response
-				);
-
-				if (result) {
-					applyResponse(
-						result,
-						expressIO,
+			setTimeout(
+				() => {
+					this.sendResponse(
+						response,
+						inputOutput,
 						true
 					);
-				}
-			} else if (isAsyncCustomResponse(response)) {
-				response.asyncHandler(
-					expressIO.request,
-					expressIO.response,
-					(result) => {
-						if (result) {
-							applyResponse(
-								result,
-								expressIO,
-								true
-							);
-						}
-					}
-				);
-			} else if (isTextResponse(response)) {
-				if (response.status) {
-					expressIO.response.status(
-						response.status
-					);
-				}
+				},
+				delay
+			);
+			return;
+		}
 
-				expressIO.response.send(
-					response.text
-				);
-			} else if (isJsonResponse(response)) {
-				if (response.status) {
-					expressIO.response.status(
-						response.status
-					);
-				}
+		// Set response headers
 
-				expressIO.response.json(
-					response.json
+		if (response.headers) {
+			Object.keys(response.headers).forEach(headerName => {
+				inputOutput.response.setHeader(
+					headerName,
+					response.headers![headerName]
 				);
-			} else if (isPageResponse(response)) {
-				if (response.status) {
-					expressIO.response.status(
-						response.status
-					);
-				}
+			});
+		}
 
-				expressIO.response.render(
-					response.path,
-					response.data
-				);
-			} else if (isRedirectResponse(response)) {
-				expressIO.response.redirect(
-					response.redirectTo
+		// Set response status
+
+		if (response.status) {
+			inputOutput.response.status(
+				response.status
+			);
+		}
+
+		// Check response type and handle it appropriately
+
+		if (isCustomResponse(response)) {
+			let result = response.handler(
+				inputOutput.request,
+				inputOutput.response
+			);
+
+			if (result) {
+				this.sendResponse(
+					result,
+					inputOutput,
+					true
 				);
 			}
-		};
+		} else if (isAsyncCustomResponse(response)) {
+			response.asyncHandler(
+				inputOutput.request,
+				inputOutput.response,
+				(result) => {
+					if (result) {
+						this.sendResponse(
+							result,
+							inputOutput,
+							true
+						);
+					}
+				}
+			);
+		} else if (isTextResponse(response)) {
+			inputOutput.response.send(
+				response.text
+			);
+		} else if (isJsonResponse(response)) {
+			inputOutput.response.json(
+				response.json
+			);
+		} else if (isPageResponse(response)) {
+			inputOutput.response.render(
+				response.path,
+				response.data
+			);
+		} else if (isRedirectResponse(response)) {
+			inputOutput.response.redirect(
+				response.redirectTo
+			);
+		}
+	}
 
+	private mountRoutes() {
 		const emptyHandler = (request: express.Request, response: any, next: any) => {
 			next();
 		};
 
-		this.manifest.api.routes.forEach((route) => {
+		this.manifest.api.routes.forEach(route => {
 			if (route.methods.get) {
 				let methodHandler = route.methods.get;
 				this.router.get(
 					route.url,
 					route.corsBlocked ? emptyHandler : cors(),
 					(request, response) => {
-						applyResponse(
+						this.sendResponse(
 							route.methods.get!,
 							new InputOutput(
 								request,
@@ -209,7 +210,7 @@ export class App {
 					route.url,
 					route.corsBlocked ? emptyHandler : cors(),
 					(request, response) => {
-						applyResponse(
+						this.sendResponse(
 							methodHandler,
 							new InputOutput(
 								request,
@@ -227,7 +228,7 @@ export class App {
 					route.url,
 					route.corsBlocked ? emptyHandler : cors(),
 					(request, response) => {
-						applyResponse(
+						this.sendResponse(
 							methodHandler,
 							new InputOutput(
 								request,
@@ -245,7 +246,7 @@ export class App {
 					route.url,
 					route.corsBlocked ? emptyHandler : cors(),
 					(request, response) => {
-						applyResponse(
+						this.sendResponse(
 							methodHandler,
 							new InputOutput(
 								request,

@@ -1,6 +1,6 @@
 {
-    "name": "@russo-programmisto/manifest",
-    "version": "5.0.1",
+    "name": "@simplisticated/manifest",
+    "version": "5.1.1",
     "description": "Easy configuration for Node.js app",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -10,14 +10,14 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/russo-programmisto/Manifest-for-Node.git"
+        "url": "git+https://github.com/simplisticated/Manifest-for-Node.git"
     },
     "author": "Igor Matyushkin",
     "license": "Apache-2.0",
     "bugs": {
-        "url": "https://github.com/russo-programmisto/Manifest-for-Node/issues"
+        "url": "https://github.com/simplisticated/Manifest-for-Node/issues"
     },
-    "homepage": "https://github.com/russo-programmisto/Manifest-for-Node#readme",
+    "homepage": "https://github.com/simplisticated/Manifest-for-Node#readme",
     "dependencies": {
         "cors": "2.8.5",
         "express": "4.17.2",
