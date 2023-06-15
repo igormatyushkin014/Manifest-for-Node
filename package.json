@@ -1,6 +1,6 @@
 {
     "name": "@simplisticated/manifest",
-    "version": "5.1.1",
+    "version": "5.2.0",
     "description": "Easy configuration for Node.js app",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
