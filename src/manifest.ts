@@ -1,3 +1,4 @@
+import { CorsOptions } from "cors";
 import { RequestHandler } from "./io/request/request-handler";
 import { Route } from "./route";
 import express from "express";
@@ -6,26 +7,29 @@ import https from "https";
 
 export type Manifest = {
 	readonly server: {
-		readonly port: number,
-		readonly secure: boolean,
-		readonly corsBlocked?: boolean,
+		readonly port: number
+		readonly secure: boolean
+		readonly cors: {
+			isBlocked: boolean
+			configuration?: CorsOptions
+		}
 		staticLocations?: {
-			alias: string,
+			alias: string
 			realPath: string
-		}[],
+		}[]
 		readonly preSetup?: (
 			expressInstance: express.Express,
 			server: http.Server | https.Server
 		) => void
-	},
+	}
 	readonly api: {
-		readonly routes: Route[],
+		readonly routes: Route[]
 		readonly requestHandlers?: RequestHandler[]
-	},
+	}
 	readonly viewEngines?: {
-		current: "handlebars" | "none",
+		current: "handlebars" | "none"
 		partialsDirectory: string
-	},
+	}
 	readonly blacklist?: {
 		ip: string[]
 	}
@@ -35,7 +39,10 @@ export const getDefaultManifest = (): Manifest => {
 	return {
 		server: {
 			port: 3000,
-			secure: false
+			secure: false,
+			cors: {
+				isBlocked: false
+			}
 		},
 		api: {
 			routes: [
