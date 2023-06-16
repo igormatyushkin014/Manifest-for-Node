@@ -43,11 +43,9 @@ export class App {
 
 		this.preSetup();
 
-		if (!manifest.server.cors.isBlocked) {
+		if (!manifest.server.corsBlocked) {
 			this.expressInstance.use(
-				manifest.server.cors.configuration
-					? cors(manifest.server.cors.configuration)
-					: cors()
+				cors()
 			);
 		}
 

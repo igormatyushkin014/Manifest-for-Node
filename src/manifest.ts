@@ -9,10 +9,7 @@ export type Manifest = {
 	readonly server: {
 		readonly port: number
 		readonly secure: boolean
-		readonly cors: {
-			isBlocked: boolean
-			configuration?: CorsOptions
-		}
+		readonly corsBlocked?: boolean
 		staticLocations?: {
 			alias: string
 			realPath: string
@@ -39,10 +36,7 @@ export const getDefaultManifest = (): Manifest => {
 	return {
 		server: {
 			port: 3000,
-			secure: false,
-			cors: {
-				isBlocked: false
-			}
+			secure: false
 		},
 		api: {
 			routes: [
